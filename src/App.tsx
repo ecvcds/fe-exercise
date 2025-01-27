@@ -1,46 +1,27 @@
-import React, { useState } from 'react'
-import './App.css'
-import Button from 'react-bootstrap/Button';
-import { Alert, Container } from 'react-bootstrap';
-import { Modal } from 'react-bootstrap';
-const App = () => {
-  
-  const [show,setShow] = useState(false);
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import { Container } from "react-bootstrap";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
-
-  const toggleModal = () => {
-    setShow(!show);
-  }
-
+const App: React.FC = () => {
   return (
-    <Container>
-      <h1>FE-Exercise</h1>
-      
-       <Button variant="primary" onClick={toggleModal}>
-         Log in
-       </Button>
-      
-      <Modal show={show} onHide={toggleModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Log in</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          This is a modal
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={toggleModal}>
-            Close
-          </Button>
-          <Button variant="success" onClick={toggleModal}>
-            Log in
-          </Button>
-        </Modal.Footer>
-
-      </Modal>
-
-    </Container>
-  )
-}
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Container>
+              <h1>FE-Exercise</h1>
+              <Login />
+            </Container>
+          }
+        />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
