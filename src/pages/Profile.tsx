@@ -21,6 +21,7 @@ interface User {
 }
 
 interface Post {
+  id: string;
   userId: string;
   postedAt: string;
   title: string;
@@ -57,15 +58,15 @@ export const Profile = () => {
     }
   }, []);
 
-/**
- * Fetches and sets the posts for a given user, sorted in reverse chronological order.
- *  The user whose posts are to be fetched.
- * This function sends a request to the backend to retrieve all posts,
- * filters the posts to include only those belonging to the specified user,
- * sorts them by their posting date from newest to oldest, and updates the
- * state with these posts. If an error occurs during the fetch operation,
- * it logs the error and sets an error message in the state.
- */
+  /**
+   * Fetches and sets the posts for a given user, sorted in reverse chronological order.
+   *  The user whose posts are to be fetched.
+   * This function sends a request to the backend to retrieve all posts,
+   * filters the posts to include only those belonging to the specified user,
+   * sorts them by their posting date from newest to oldest, and updates the
+   * state with these posts. If an error occurs during the fetch operation,
+   * it logs the error and sets an error message in the state.
+   */
 
   const getPosts = async (user: User) => {
     try {
@@ -90,10 +91,10 @@ export const Profile = () => {
 
   const handleModalToggle = () => setShowModal(!showModal);
 
-/**
- * Handles the change event for input and textarea fields.
- * Updates the newPost state with the changed input values.
- */
+  /**
+   * Handles the change event for input and textarea fields.
+   * Updates the newPost state with the changed input values.
+   */
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -101,17 +102,17 @@ export const Profile = () => {
     setNewPost({ ...newPost, [e.target.name]: e.target.value });
   };
 
-/**
- * Handles the form submission for adding a new post.
- * 
- * This function validates the new post data, constructs a post object,
- * sends it to the backend, and updates the application state based on the
- * response. If the post submission is successful, it adds the new post to
- * the existing list of posts and displays a success message. If submission
- * fails, it logs the error and can set an error message. It also manages 
- * loading state and modal visibility.
- * 
- */
+  /**
+   * Handles the form submission for adding a new post.
+   *
+   * This function validates the new post data, constructs a post object,
+   * sends it to the backend, and updates the application state based on the
+   * response. If the post submission is successful, it adds the new post to
+   * the existing list of posts and displays a success message. If submission
+   * fails, it logs the error and can set an error message. It also manages
+   * loading state and modal visibility.
+   *
+   */
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,9 +157,40 @@ export const Profile = () => {
     }
   };
 
+  /**
+   * Logs out the current user by removing their data from local storage and redirects to the login page.
+   *
+   * This function clears the "loggedInUser" key from local storage, effectively logging the user out,
+   * and then navigates the user back to the home page ("/"), which is typically the login screen.
+   */
+
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     navigate("/");
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`http://localhost:5001/posts/${postId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete post, status: ${response.status}`);
+      }
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+      setSuccess("Your post has been successfully deleted!");
+      setError(null);
+    } catch (err) {
+      console.error("Error deleting post:", err);
+    } finally {
+      if (user) {
+        await getPosts(user);
+      }
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -206,6 +238,14 @@ export const Profile = () => {
                       </Card.Body>
                       <Card.Footer className="text-muted">
                         Posted on {new Date(post.postedAt).toLocaleDateString()}
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeletePost(post.id)}
+                          className="ms-3"
+                        >
+                          Delete
+                        </Button>
                       </Card.Footer>
                     </Card>
                   </Col>
@@ -214,6 +254,8 @@ export const Profile = () => {
             ) : (
               <Alert variant="info">You have no posts yet.</Alert>
             )}
+
+            {/* New Post Modal */}
             <Modal show={showModal} onHide={handleModalToggle}>
               <Modal.Header closeButton>
                 <Modal.Title>Add New Post</Modal.Title>
