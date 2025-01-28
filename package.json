@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "json-server": "json-server --watch db/data.json --port 5000",
+    "json-server": "json-server --watch db/data.json --port 5001",
     "preview": "vite preview"
   },
   "dependencies": {

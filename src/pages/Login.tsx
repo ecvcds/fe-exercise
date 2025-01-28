@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
+const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +20,6 @@ const Login: React.FC = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  console.log(users);
   const toggleModal = () => {
     setShow(!show);
     if (!show) {
@@ -60,6 +59,7 @@ const Login: React.FC = () => {
           }));
         }
       } else {
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
         setShow(false);
         navigate("/profile", { state: { user } });
       }
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
 
       <Modal show={show} onHide={toggleModal} backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
+          <Modal.Title>Log in</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
