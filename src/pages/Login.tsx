@@ -2,6 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Component to handle user login.
+ *
+ * This component displays a button "Log in" which opens a modal with a form
+ * for the user to enter their email and password. The component fetches the
+ * list of users from the backend and checks if the entered email and password
+ * match a user in the list. If they do, it logs the user in by storing the
+ * user data in local storage and redirects to the profile page. If not, it
+ * displays an error message.
+ *
+ */
 const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
@@ -20,6 +31,12 @@ const Login = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
+  /**
+   * Toggles the login modal visibility.
+   *
+   * When the modal is shown, it resets the email and password fields and clears
+   * the error messages.
+   */
   const toggleModal = () => {
     setShow(!show);
     if (!show) {
@@ -29,6 +46,15 @@ const Login = () => {
     }
   };
 
+  /**
+   * Handles the login form submission.
+   *
+   * Validates the email and password fields and checks if a user with the
+   * entered email and password exists in the list of users from the backend.
+   * If the user exists, it logs the user in by storing the user data in local
+   * storage and redirects to the profile page. If not, it displays an error
+   * message.
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError({});
